@@ -43,7 +43,7 @@ export default function Home() {
     data: lotteryData,
     write: getLuckyHolder,
     isLoading: isLotteryLoading,
-    isSuccess: isLotteryStarted,
+    isSuccess: isLotteryFinished,
     error: lotteryError,
   } = useContractWrite(contractWriteConfig);
 
@@ -97,7 +97,11 @@ export default function Home() {
 
       <div>
         <Button className="px-3 py-6" onClick={getLuckyHolder}>
-          Roll the dice
+          {isLotteryLoading
+            ? "Rolling Dice"
+            : isLotteryFinished
+            ? "Winner Below"
+            : "Roll the dice"}
         </Button>
       </div>
 
