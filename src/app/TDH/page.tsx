@@ -180,7 +180,9 @@ export default function Home() {
                 ) : (
                   isLockTimeSuccess && (
                     <p>
-                      {formattedTime}
+                      {_lockTime>0 &&
+                        
+                        formattedTime}
                       {lockTime && lockTime > 0 ? "" : "0.00"}
                     </p>
                   )
