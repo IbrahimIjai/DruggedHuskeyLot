@@ -19,7 +19,8 @@ import {
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [
-    polygonMumbai , dogechain,
+    // polygonMumbai ,
+     dogechain,
     // ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === 'true' ? [sepolia] : []),
   ],
   [publicProvider()]

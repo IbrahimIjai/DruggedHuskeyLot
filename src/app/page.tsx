@@ -36,7 +36,6 @@ export default function Home() {
   const { config: contractWriteConfig } = usePrepareContractWrite({
     ...nftlottery,
     functionName: "getLuckyHolder",
-    // args: [BigInt(values.total_supply)],
   });
 
   const {
