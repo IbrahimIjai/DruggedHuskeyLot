@@ -27,7 +27,7 @@ export default function Home() {
   const { isConnected, address } = useAccount();
 
   const [_lockedBalance, setLockedBalance] = useState<bigint>(0n);
-
+  const [_RewardBalance, setRewardBalance] = useState<bigint>(0n);
   const {
     data: lockedBalance,
     refetch: refectLockedBalance,
@@ -88,6 +88,7 @@ export default function Home() {
 
   useEffect(() => {
     lockedBalance && setLockedBalance(lockedBalance);
+    rewardBalance && setRewardBalance(rewardBalance);
 
     unLockError && console.log(unLockError);
     unlockingFinished && console.log(unlockingFinished);
@@ -109,7 +110,13 @@ export default function Home() {
           onClick: () => console.log("Close"),
         },
       });
-  }, [lockedBalance, unLockError, unlockingFinished, unlockingStarted]);
+  }, [
+    lockedBalance,
+    unLockError,
+    unlockingFinished,
+    unlockingStarted,
+    rewardBalance,
+  ]);
 
   return (
     <main className="flex flex-col items-center justify-center min-h-screen p-6">
@@ -144,7 +151,11 @@ export default function Home() {
                 ) : (
                   isRewardBalSuccess && (
                     <p>
-                      {rewardBalance && formatEther(rewardBalance as bigint)}
+                      {formatEther(_RewardBalance)}
+                      {/* {rewardBalance &&
+                        formatEther(
+                          rewardBalance ? rewardBalance : 0,
+                        ).toString()} */}
                       {rewardBalance && rewardBalance > 0 ? "" : "0.00"}
                     </p>
                   )
@@ -164,7 +175,7 @@ export default function Home() {
                 ) : (
                   isLockTimeSuccess && (
                     <p>
-                      {lockTime && formattedTime.toString()}
+                      {formattedTime && formattedTime.toString()}
                       {lockTime && lockTime > 0 ? "" : "0.00"}
                     </p>
                   )
