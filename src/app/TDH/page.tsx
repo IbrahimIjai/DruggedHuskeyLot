@@ -39,7 +39,7 @@ export default function Home() {
     functionName: "lockedBalance",
     args: [isConnected && address ? address : ("" as Address)],
     // args: ["0xf120A19d1460bCFf82E1670842e9dFea9101eed8" as Address],
-    watch: true,
+    // watch: true,
   });
 
   const {
@@ -52,7 +52,7 @@ export default function Home() {
     functionName: "rewardBalance",
     args: [isConnected && address ? address : ("" as Address)],
     // args: ["0xf120A19d1460bCFf82E1670842e9dFea9101eed8" as Address],
-    watch: true,
+    // watch: true,
   });
 
   const {
@@ -65,7 +65,7 @@ export default function Home() {
     functionName: "lockTime",
     args: [isConnected && address ? address : ("" as Address)],
     // args: ["0xf120A19d1460bCFf82E1670842e9dFea9101eed8" as Address],
-    watch: true,
+    // watch: true,
   });
 
   //   UNLOCKED TOKEN FUNCTION
@@ -125,9 +125,9 @@ export default function Home() {
 
   return (
     <main className="flex flex-col items-center justify-center min-h-screen p-6">
-      <div className="flex flex-col w-full gap-6 max-w-sm items-center">
-        <div className="flex items-center flex-wrap gap-6 border rounded-lg shadow-md p-4">
-          <div className="flex items-center gap-2 border p-3 ">
+      <div className="flex flex-col items-center w-full max-w-sm gap-6">
+        <div className="flex flex-wrap items-center gap-6 p-4 border rounded-lg shadow-md">
+          <div className="flex items-center gap-2 p-3 border ">
             <p className="font-semibold">Balance Locked:</p>
             {isConnected ? (
               <div>
@@ -147,7 +147,7 @@ export default function Home() {
             )}
           </div>
 
-          <div className="flex items-center gap-2 border p-3 ">
+          <div className="flex items-center gap-2 p-3 border ">
             <p className="font-semibold">Reward Gained:</p>
             {isConnected ? (
               <div>
@@ -171,7 +171,7 @@ export default function Home() {
             )}
           </div>
 
-          <div className="flex items-center gap-2 border p-3 ">
+          <div className="flex items-center gap-2 p-3 border ">
             <p className="font-semibold">Lock Time:</p>
             {isConnected ? (
               <div>
