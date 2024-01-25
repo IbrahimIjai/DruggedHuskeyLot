@@ -28,6 +28,7 @@ export default function Home() {
 
   const [_lockedBalance, setLockedBalance] = useState<bigint>(0n);
   const [_RewardBalance, setRewardBalance] = useState<bigint>(0n);
+  const [_lockTime, setLockTime] = useState<bigint>(0n);
   const {
     data: lockedBalance,
     refetch: refectLockedBalance,
@@ -67,10 +68,6 @@ export default function Home() {
     watch: true,
   });
 
-  const { formattedTime } = useUnixTimeCountDown(
-    isLockTimeSuccess ? Number(lockTime) : 0,
-  );
-
   //   UNLOCKED TOKEN FUNCTION
   const { config: contractWriteConfig } = usePrepareContractWrite({
     ...TDHLocker,
@@ -86,9 +83,12 @@ export default function Home() {
     error: unLockError,
   } = useContractWrite(contractWriteConfig);
 
+  //USEEFFECT
+
   useEffect(() => {
     lockedBalance && setLockedBalance(lockedBalance);
     rewardBalance && setRewardBalance(rewardBalance);
+    lockTime && setLockTime(lockTime);
 
     unLockError && console.log(unLockError);
     unlockingFinished && console.log(unlockingFinished);
@@ -117,6 +117,11 @@ export default function Home() {
     unlockingStarted,
     rewardBalance,
   ]);
+
+  //FORMATE TIME
+  const { formattedTime } = useUnixTimeCountDown(
+    isLockTimeSuccess ? Number(_lockTime) : 0,
+  );
 
   return (
     <main className="flex flex-col items-center justify-center min-h-screen p-6">
@@ -175,7 +180,7 @@ export default function Home() {
                 ) : (
                   isLockTimeSuccess && (
                     <p>
-                      {formattedTime && formattedTime.toString()}
+                      {formattedTime}
                       {lockTime && lockTime > 0 ? "" : "0.00"}
                     </p>
                   )
