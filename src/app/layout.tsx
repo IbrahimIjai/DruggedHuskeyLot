@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import Header from "@/components/header";
+import Footer from "@/components/footer";
 import "@rainbow-me/rainbowkit/styles.css";
 import { Toaster } from "@/components/ui/sonner";
 import {GoogleAnalytics} from "./trackers"
@@ -24,6 +25,7 @@ export default function RootLayout({
         <Providers>
           <Header />
           <main>{children}</main>
+          <Footer/>
           <Toaster />
         </Providers>
         <GoogleAnalytics/>
