@@ -9,8 +9,8 @@ import {GoogleAnalytics} from "./trackers"
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "TDH Unlock",
-  description: "Unlock Doge coins",
+  title: "TDH Recovery",
+  description: "Recover and claim your stake tokens",
 };
 
 export default function RootLayout({
