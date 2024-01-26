@@ -1,47 +1,46 @@
-'use client';
+"use client";
 
-import * as React from 'react';
+import * as React from "react";
 import {
   RainbowKitProvider,
   getDefaultWallets,
   connectorsForWallets,
-} from '@rainbow-me/rainbowkit';
+  darkTheme,
+} from "@rainbow-me/rainbowkit";
 import {
   argentWallet,
   trustWallet,
   ledgerWallet,
-} from '@rainbow-me/rainbowkit/wallets';
-import { configureChains, createConfig, WagmiConfig } from 'wagmi';
-import { publicProvider } from 'wagmi/providers/public';
-import {
-  polygonMumbai, dogechain,
-} from 'wagmi/chains';
+} from "@rainbow-me/rainbowkit/wallets";
+import { configureChains, createConfig, WagmiConfig } from "wagmi";
+import { publicProvider } from "wagmi/providers/public";
+import { polygonMumbai, dogechain } from "wagmi/chains";
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [
     // polygonMumbai ,
-     dogechain,
+    dogechain,
     // ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === 'true' ? [sepolia] : []),
   ],
-  [publicProvider()]
+  [publicProvider()],
 );
 
-const projectId = '3a8170812b534d0ff9d794f19a901d64';
+const projectId = "3a8170812b534d0ff9d794f19a901d64";
 
 const { wallets } = getDefaultWallets({
-  appName: 'RainbowKit demo',
+  appName: "RainbowKit demo",
   projectId,
   chains,
 });
 
 const demoAppInfo = {
-  appName: 'Rainbowkit Demo',
+  appName: "Rainbowkit Demo",
 };
 
 const connectors = connectorsForWallets([
   ...wallets,
   {
-    groupName: 'Other',
+    groupName: "Other",
     wallets: [
       argentWallet({ projectId, chains }),
       trustWallet({ projectId, chains }),
@@ -62,7 +61,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
   React.useEffect(() => setMounted(true), []);
   return (
     <WagmiConfig config={wagmiConfig}>
-      <RainbowKitProvider chains={chains} appInfo={demoAppInfo}>
+      <RainbowKitProvider
+        theme={darkTheme()}
+        chains={chains}
+        appInfo={demoAppInfo}
+      >
         {mounted && children}
       </RainbowKitProvider>
     </WagmiConfig>

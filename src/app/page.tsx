@@ -5,9 +5,8 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useState, ChangeEvent, useEffect } from "react";
-
+import useUnixTimeCountDown from "@/hooks/useCountDown";
 import { format } from "date-fns";
-
 import {
   Address,
   useAccount,
@@ -17,143 +16,220 @@ import {
   useWaitForTransaction,
 } from "wagmi";
 
-import { nftlottery } from "@/lib/config";
+import { formatEther, formatUnits } from "viem";
+
+import { TDHLocker } from "@/lib/config";
 import axios from "axios";
 import { Skeleton } from "@/components/ui/skeleton";
-// import { abi } from "../lib/abi";
-interface trxarguments {
-  collection_address: string;
-  total_supply: number;
-}
-
-// const contractConfig = {
-//   address: "0x1555E9c81601F45739163EA69f6079F7EC170047" as Address,
-//   abi: abi,
-// } as const;
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { toast } from "sonner";
 export default function Home() {
-  const [winningImgUrl, setWinningImgUrl] = useState<string>("");
-  const [imgLoading, setImgLoading] = useState(false);
-  const { config: contractWriteConfig } = usePrepareContractWrite({
-    ...nftlottery,
-    functionName: "getLuckyHolder",
+  const { isConnected, address } = useAccount();
+
+  const [_lockedBalance, setLockedBalance] = useState<bigint>(0n);
+  const [_RewardBalance, setRewardBalance] = useState<bigint>(0n);
+  const [_lockTime, setLockTime] = useState<bigint>(0n);
+  const {
+    data: lockedBalance,
+    refetch: refectLockedBalance,
+    isFetching,
+    isSuccess,
+  } = useContractRead({
+    ...TDHLocker,
+    functionName: "lockedBalance",
+    args: [isConnected && address ? address : ("" as Address)],
+    // args: ["0xf120A19d1460bCFf82E1670842e9dFea9101eed8" as Address],
+    // watch: true,
   });
 
   const {
-    data: lotteryData,
-    write: getLuckyHolder,
-    isLoading: isLotteryLoading,
-    isSuccess: isLotteryFinished,
-    error: lotteryError,
+    data: rewardBalance,
+    refetch: refectRewardBalance,
+    isFetching: isRewardBalFetching,
+    isSuccess: isRewardBalSuccess,
+  } = useContractRead({
+    ...TDHLocker,
+    functionName: "rewardBalance",
+    args: [isConnected && address ? address : ("" as Address)],
+    // args: ["0xf120A19d1460bCFf82E1670842e9dFea9101eed8" as Address],
+    // watch: true,
+  });
+
+  const {
+    data: lockTime,
+    refetch: refectLockTime,
+    isFetching: isLockTimeFetching,
+    isSuccess: isLockTimeSuccess,
+  } = useContractRead({
+    ...TDHLocker,
+    functionName: "lockTime",
+    args: [isConnected && address ? address : ("" as Address)],
+    // args: ["0xf120A19d1460bCFf82E1670842e9dFea9101eed8" as Address],
+    // watch: true,
+  });
+
+  //   UNLOCKED TOKEN FUNCTION
+  const { config: contractWriteConfig } = usePrepareContractWrite({
+    ...TDHLocker,
+    functionName: "unlockTokens",
+    args: [_lockedBalance ? _lockedBalance : 0n],
+  });
+
+  const {
+    data: unluckTokensInfo,
+    write: unlockTokens,
+    isLoading: unlockingStarted,
+    isSuccess: unlockingFinished,
+    error: unLockError,
   } = useContractWrite(contractWriteConfig);
 
-  const { data: latestLottery, refetch: refectLatestInfo } = useContractRead({
-    ...nftlottery,
-    functionName: "getEventByLattestIndex",
-    watch: true,
-  });
-
-  const {
-    data: txData,
-    isSuccess: txSuccess,
-    error: txError,
-  } = useWaitForTransaction({
-    hash: lotteryData?.hash,
-  });
-
-  const fetchNFTImage = async (winningNftUrl: string) => {
-    setImgLoading(true);
-    let newUrl = winningNftUrl.replace("ipfs://", "https://ipfs.io/ipfs/");
-    let metadata = await axios.get(newUrl).catch(function (error) {
-      console.log(error.toJSON());
-    });
-
-    console.log(metadata?.data);
-    let nftdata = metadata?.data;
-    console.log(nftdata.image.replace("ipfs://", "https://ipfs.io/ipfs/"));
-    setWinningImgUrl(nftdata.image.replace("ipfs://", "https://ipfs.io/ipfs/"));
-    setImgLoading(false);
-  };
+  //USEEFFECT
 
   useEffect(() => {
-    latestLottery && fetchNFTImage(latestLottery.nftUrl);
-    txSuccess &&
-      txData &&
-      console.log(
-        "this is recent transaction data",
-        txData,
-        "this is lotteryData",
-        lotteryData,
-      );
-    refectLatestInfo();
-  }, [txData, txSuccess, lotteryData, latestLottery]);
+    lockedBalance && setLockedBalance(lockedBalance);
+    rewardBalance && setRewardBalance(rewardBalance);
+    lockTime && setLockTime(lockTime);
+
+    unLockError && console.log(unLockError);
+    unlockingFinished && console.log(unlockingFinished);
+    unlockingStarted && console.log(unlockingStarted);
+
+    unlockingStarted &&
+      toast("Unlocking Starting...", {
+        description: "Hang on",
+        action: {
+          label: "Close",
+          onClick: () => console.log("Close"),
+        },
+      });
+    unLockError &&
+      toast("Unlocking error...", {
+        description: "Something went wrong",
+        action: {
+          label: "Close",
+          onClick: () => console.log("Close"),
+        },
+      });
+  }, [
+    lockedBalance,
+    unLockError,
+    unlockingFinished,
+    unlockingStarted,
+    rewardBalance,
+  ]);
+
+  //FORMATE TIME
+  const { formattedTime } = useUnixTimeCountDown(
+    isLockTimeSuccess ? Number(_lockTime) : 0,
+  );
 
   return (
-    <main className="flex flex-col items-center min-h-screen p-5">
-      <h1 className="mx-auto my-4 font-semibold text-center">
-        {" "}
-        Drugged Huskies
-      </h1>
+    <main className="flex flex-col items-center justify-center min-h-screen p-6">
+      <div className="flex flex-col items-center w-full max-w-sm gap-6">
 
-      <div>
-        <Button className="px-3 py-6" onClick={getLuckyHolder}>
-          {isLotteryLoading
-            ? "Rolling Dice"
-            : isLotteryFinished
-            ? "Winner Below"
-            : "Roll the dice"}
-        </Button>
-      </div>
+      <h1 className="font-semibold text-2xl">THD Recovery</h1>
 
-      <div>
-        <h1 className="mx-auto my-4 font-semibold text-center">
-          {" "}
-          Last Lottery winner details
-        </h1>
-        {latestLottery && (
-          <div>
-            <p>
-              <span className="text-xl font-bold"> Collection Address:</span>
-              {latestLottery.collection_address}
-            </p>
-            <p>
-              <span className="text-xl font-bold">Admin: </span>
-              {latestLottery.admin}
-            </p>
-            <p>
-              {" "}
-              <span className="text-xl font-bold">Lucky Number:</span>{" "}
-              {Number(latestLottery.luckyNumber)}
-            </p>
-            <p>
-              {" "}
-              <span className="text-xl font-bold">Lucky User: </span>
-              {latestLottery.luckyuser}
-            </p>
-            <p>
-              {" "}
-              <span className="text-xl font-bold">Time:</span>
-              {format(
-                new Date(Number(latestLottery.time) * 1000),
-                "do MMM, yyyy",
-              )}
-            </p>
-            <p>NFT URL: {latestLottery.nftUrl}</p>
+        <div className="flex flex-wrap items-center gap-6 p-4 border rounded-lg shadow-md">
+          <div className="flex items-center gap-2 p-3 border ">
+            <p className="font-semibold">Balance Locked:</p>
+            {isConnected ? (
+              <div>
+                {isFetching ? (
+                  <Skeleton className="w-12 h-4" />
+                ) : (
+                  isSuccess && (
+                    <p>
+                      {formatEther(_lockedBalance)}
+                      {lockedBalance && lockedBalance > 0 ? "" : "0.00"}
+                    </p>
+                  )
+                )}
+              </div>
+            ) : (
+              "Connect Wallet"
+            )}
+          </div>
+
+          <div className="flex items-center gap-2 p-3 border ">
+            <p className="font-semibold">Reward Gained:</p>
+            {isConnected ? (
+              <div>
+                {isRewardBalFetching ? (
+                  <Skeleton className="w-12 h-4" />
+                ) : (
+                  isRewardBalSuccess && (
+                    <p>
+                      {formatEther(_RewardBalance)}
+                      {/* {rewardBalance &&
+                        formatEther(
+                          rewardBalance ? rewardBalance : 0,
+                        ).toString()} */}
+                      {rewardBalance && rewardBalance > 0 ? "" : "0.00"}
+                    </p>
+                  )
+                )}
+              </div>
+            ) : (
+              "Connect Wallet"
+            )}
+          </div>
+
+          <div className="flex items-center gap-2 p-3 border ">
+            <p className="font-semibold">Lock Time:</p>
+            {isConnected ? (
+              <div>
+                {isLockTimeFetching ? (
+                  <Skeleton className="w-12 h-4" />
+                ) : (
+                  isLockTimeSuccess && (
+                    <p>
+                      {_lockTime>0 &&
+                        
+                        formattedTime}
+                      {lockTime && lockTime > 0 ? "" : "0.00"}
+                    </p>
+                  )
+                )}
+              </div>
+            ) : (
+              "Connect Wallet"
+            )}
+          </div>
+        </div>
+
+       <div className="border shadow-sm p-4 m-4 flex flex-col gap-4">
+
+       <div>
+          <Label htmlFor="tokenamount">Token amount to unlock</Label>
+          <Input
+            disabled={
+              isConnected && lockedBalance && lockedBalance < 0 ? false : true
+            }
+            type="number"
+            id="tokenamount"
+            placeholder="example: 1000"
+            value={_lockedBalance > 0n ? formatUnits(_lockedBalance, 18) : 0}
+          />
+        </div>
+        <div>
+          {isConnected ? (
             <div>
-              {imgLoading ? (
-                <Skeleton className="h-[400px] w-[300px]" />
+              {lockedBalance && lockedBalance > 0 ? (
+                <Button onClick={lockedBalance > 0 ? unlockTokens : () => {}}>
+                  {unlockingStarted ? "Unlocking..." : "Unlock All Tokens "}
+                </Button>
               ) : (
-                <div className="relative w-[300px] h-[400px] overflow-hidden rounded-xl border">
-                  <Image
-                    src={winningImgUrl}
-                    alt="NFT Image"
-                    fill
-                    className="objectFit-cover"
-                  />
-                </div>
+                <Button>No tokens found</Button>
               )}
             </div>
-          </div>
-        )}
+          ) : (
+            <ConnectButton />
+          )}
+        </div>
+
+       </div>
+
+
       </div>
     </main>
   );
