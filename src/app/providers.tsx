@@ -8,9 +8,9 @@ import {
   darkTheme,
 } from "@rainbow-me/rainbowkit";
 import {
-  argentWallet,
+  // argentWallet,
   trustWallet,
-  ledgerWallet,
+  // ledgerWallet,
 } from "@rainbow-me/rainbowkit/wallets";
 import { configureChains, createConfig, WagmiConfig } from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
@@ -42,9 +42,9 @@ const connectors = connectorsForWallets([
   {
     groupName: "Other",
     wallets: [
-      argentWallet({ projectId, chains }),
+      // argentWallet({ projectId, chains }),
       trustWallet({ projectId, chains }),
-      ledgerWallet({ projectId, chains }),
+      // ledgerWallet({ projectId, chains }),
     ],
   },
 ]);
