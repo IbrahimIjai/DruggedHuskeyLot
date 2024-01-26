@@ -9,7 +9,7 @@ import {GoogleAnalytics} from "./trackers"
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "THD Unlock",
+  title: "TDH Unlock",
   description: "Unlock Doge coins",
 };
 

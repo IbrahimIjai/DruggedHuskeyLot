@@ -127,7 +127,7 @@ export default function Home() {
     <main className="flex flex-col items-center justify-center min-h-screen p-6">
       <div className="flex flex-col items-center w-full max-w-sm gap-6">
 
-      <h1 className="font-semibold text-2xl">THD Recovery</h1>
+      <h1 className="font-semibold text-2xl">TDH - Recovery</h1>
 
         <div className="flex flex-wrap items-center gap-6 p-4 border rounded-lg shadow-md">
           <div className="flex items-center gap-2 p-3 border ">
