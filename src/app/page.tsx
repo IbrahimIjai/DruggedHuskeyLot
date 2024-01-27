@@ -220,18 +220,18 @@ export default function Home() {
                 {lockedBalance && lockedBalance > 0 ? (
                   <Button
                     onClick={ () => {
-                       unlockTokens?.();
-                      // toast("Unlocking started", {
-                      //   description: "Approve transaction your wallet",
-                      //   action: {
-                      //     label: "close",
-                      //     onClick: () => console.log("close"),
-                      //   },
-                      // });
-                      // unlockingStarted &&
-                      //   console.log("loading...", unlockingStarted);
-                      // unluckTokensInfo && console.log("info", unluckTokensInfo);
-                      // unLockError && console.log(unLockError);
+                      unlockTokens?.();
+                      toast("Unlocking started", {
+                        description: "Approve transaction your wallet",
+                        action: {
+                          label: "close",
+                          onClick: () => console.log("close"),
+                        },
+                      });
+                      unlockingStarted &&
+                        console.log("loading...", unlockingStarted);
+                      unluckTokensInfo && console.log("info", unluckTokensInfo);
+                      unLockError && console.log(unLockError);
                       // console.log("fuck");
                     }}
                   >
