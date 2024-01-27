@@ -24,14 +24,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { toast } from "sonner";
 
-
 export default function Home() {
   const { isConnected, address } = useAccount();
 
   const [_lockedBalance, setLockedBalance] = useState<bigint>(0n);
   const [_RewardBalance, setRewardBalance] = useState<bigint>(0n);
   const [_lockTime, setLockTime] = useState<bigint>(0n);
-  
+
   const {
     data: lockedBalance,
     refetch: refectLockedBalance,
@@ -72,13 +71,13 @@ export default function Home() {
   });
 
   //   UNLOCKED TOKEN FUNCTION
-  const { config: contractWriteConfig, status, } = usePrepareContractWrite({
+  const { config: contractWriteConfig, status } = usePrepareContractWrite({
     ...TDHLocker,
     functionName: "unlockTokens",
     args: [lockedBalance!],
   });
 
-  console.log(status)
+  console.log(status);
   const {
     data: unluckTokensInfo,
     write: unlockTokens,
@@ -86,8 +85,7 @@ export default function Home() {
     isSuccess: unlockingFinished,
     error: unLockError,
   } = useContractWrite(contractWriteConfig);
-
-  
+  console.log(unLockError);
   //USEEFFECT
 
   useEffect(() => {
@@ -120,7 +118,8 @@ export default function Home() {
     unLockError,
     unlockingFinished,
     unlockingStarted,
-    rewardBalance, lockTime
+    rewardBalance,
+    lockTime,
   ]);
 
   //FORMATE TIME
@@ -128,14 +127,13 @@ export default function Home() {
     isLockTimeSuccess ? Number(_lockTime) : 0,
   );
 
-  const handleUnlock = async()=>{
-    // const uint256Value = viem.toBN(inputValue);
-  }
+  if (unlockingStarted) return <p>Loading... Approve trx</p>
+  if (unlockingFinished) return <p>Loading...</p>
+    // unLockError
   return (
     <main className="flex flex-col items-center justify-center min-h-screen p-6">
       <div className="flex flex-col items-center w-full max-w-sm gap-6">
-
-      <h1 className="text-2xl font-semibold">TDH - Recovery</h1>
+        <h1 className="text-2xl font-semibold">TDH - Recovery</h1>
 
         <div className="flex flex-wrap items-center gap-6 p-4 border rounded-lg shadow-md">
           <div className="flex items-center gap-2 p-3 border ">
@@ -191,9 +189,7 @@ export default function Home() {
                 ) : (
                   isLockTimeSuccess && (
                     <p>
-                      {_lockTime>0 &&
-                        
-                        formattedTime}
+                      {_lockTime > 0 && formattedTime}
                       {lockTime && lockTime > 0 ? "" : "0.00"}
                     </p>
                   )
@@ -205,39 +201,51 @@ export default function Home() {
           </div>
         </div>
 
-       <div className="flex flex-col gap-4 p-4 m-4 border shadow-sm">
-
-       <div>
-          <Label htmlFor="tokenamount">Token amount to unlock</Label>
-          <Input
-            disabled={
-              isConnected && lockedBalance && lockedBalance < 0 ? false : true
-            }
-            type="number"
-            id="tokenamount"
-            placeholder="example: 1000"
-            value={_lockedBalance > 0n ? formatUnits(_lockedBalance, 18) : 0}
-          />
+        <div className="flex flex-col gap-4 p-4 m-4 border shadow-sm">
+          <div>
+            <Label htmlFor="tokenamount">Token amount to unlock</Label>
+            <Input
+              disabled={
+                isConnected && lockedBalance && lockedBalance < 0 ? false : true
+              }
+              type="number"
+              id="tokenamount"
+              placeholder="example: 1000"
+              value={_lockedBalance > 0n ? formatUnits(_lockedBalance, 18) : 0}
+            />
+          </div>
+          <div>
+            {isConnected ? (
+              <div>
+                {lockedBalance && lockedBalance > 0 ? (
+                  <Button
+                    onClick={ () => {
+                       unlockTokens?.();
+                      // toast("Unlocking started", {
+                      //   description: "Approve transaction your wallet",
+                      //   action: {
+                      //     label: "close",
+                      //     onClick: () => console.log("close"),
+                      //   },
+                      // });
+                      // unlockingStarted &&
+                      //   console.log("loading...", unlockingStarted);
+                      // unluckTokensInfo && console.log("info", unluckTokensInfo);
+                      // unLockError && console.log(unLockError);
+                      // console.log("fuck");
+                    }}
+                  >
+                    {unlockingStarted ? "Unlocking..." : "Unlock All Tokens "}
+                  </Button>
+                ) : (
+                  <Button>No tokens found</Button>
+                )}
+              </div>
+            ) : (
+              <ConnectButton />
+            )}
+          </div>
         </div>
-        <div>
-          {isConnected ? (
-            <div>
-              {lockedBalance && lockedBalance > 0 ? (
-                <Button onClick={unlockTokens}>
-                  {unlockingStarted ? "Unlocking..." : "Unlock All Tokens "}
-                </Button>
-              ) : (
-                <Button>No tokens found</Button>
-              )}
-            </div>
-          ) : (
-            <ConnectButton />
-          )}
-        </div>
-
-       </div>
-
-
       </div>
     </main>
   );
