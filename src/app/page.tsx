@@ -23,12 +23,15 @@ import axios from "axios";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { toast } from "sonner";
+
+
 export default function Home() {
   const { isConnected, address } = useAccount();
 
   const [_lockedBalance, setLockedBalance] = useState<bigint>(0n);
   const [_RewardBalance, setRewardBalance] = useState<bigint>(0n);
   const [_lockTime, setLockTime] = useState<bigint>(0n);
+  
   const {
     data: lockedBalance,
     refetch: refectLockedBalance,
@@ -69,12 +72,13 @@ export default function Home() {
   });
 
   //   UNLOCKED TOKEN FUNCTION
-  const { config: contractWriteConfig } = usePrepareContractWrite({
+  const { config: contractWriteConfig, status, } = usePrepareContractWrite({
     ...TDHLocker,
     functionName: "unlockTokens",
-    args: [_lockedBalance],
+    args: [lockedBalance!],
   });
 
+  console.log(status)
   const {
     data: unluckTokensInfo,
     write: unlockTokens,
@@ -83,6 +87,7 @@ export default function Home() {
     error: unLockError,
   } = useContractWrite(contractWriteConfig);
 
+  
   //USEEFFECT
 
   useEffect(() => {
@@ -115,7 +120,7 @@ export default function Home() {
     unLockError,
     unlockingFinished,
     unlockingStarted,
-    rewardBalance,
+    rewardBalance, lockTime
   ]);
 
   //FORMATE TIME
@@ -123,6 +128,9 @@ export default function Home() {
     isLockTimeSuccess ? Number(_lockTime) : 0,
   );
 
+  const handleUnlock = async()=>{
+    // const uint256Value = viem.toBN(inputValue);
+  }
   return (
     <main className="flex flex-col items-center justify-center min-h-screen p-6">
       <div className="flex flex-col items-center w-full max-w-sm gap-6">
