@@ -77,7 +77,6 @@ export default function Home() {
     functionName: "unlockTokens",
     args: [_dividedLockedBalance!],
     onError: function(e) {
-      console.log('ERROR!!')
       console.log(e);
     }
   });
