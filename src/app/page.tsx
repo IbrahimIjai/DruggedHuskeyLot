@@ -94,7 +94,7 @@ export default function Home() {
 
   useEffect(() => {
     lockedBalance && setLockedBalance(lockedBalance) ;
-    lockedBalance && setDividedLockedBalance(formatUnits(lockedBalance, 18));
+    lockedBalance && setDividedLockedBalance(BigInt(formatUnits(lockedBalance, 18)));
     rewardBalance && setRewardBalance(rewardBalance);
     lockTime && setLockTime(lockTime);
 
