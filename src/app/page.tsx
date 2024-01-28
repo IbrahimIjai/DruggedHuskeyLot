@@ -93,7 +93,8 @@ export default function Home() {
   //USEEFFECT
 
   useEffect(() => {
-    lockedBalance && setLockedBalance(lockedBalance) && setDividedLockedBalance(formatUnits(lockedBalance, 18));
+    lockedBalance && setLockedBalance(lockedBalance) ;
+    lockedBalance && setDividedLockedBalance(formatUnits(lockedBalance, 18));
     rewardBalance && setRewardBalance(rewardBalance);
     lockTime && setLockTime(lockTime);
 
