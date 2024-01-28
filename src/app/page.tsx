@@ -27,6 +27,7 @@ import { toast } from "sonner";
 export default function Home() {
   const { isConnected, address } = useAccount();
 
+  const [_dividedLockedBalance, setDividedLockedBalance] = useState<bigint>(0n);
   const [_lockedBalance, setLockedBalance] = useState<bigint>(0n);
   const [_RewardBalance, setRewardBalance] = useState<bigint>(0n);
   const [_lockTime, setLockTime] = useState<bigint>(0n);
@@ -74,7 +75,10 @@ export default function Home() {
   const { config: contractWriteConfig, status } = usePrepareContractWrite({
     ...TDHLocker,
     functionName: "unlockTokens",
-    args: [lockedBalance!],
+    args: [_dividedLockedBalance!],
+    onError: function(e) {
+      console.log(e);
+    }
   });
 
   console.log(status);
@@ -89,7 +93,7 @@ export default function Home() {
   //USEEFFECT
 
   useEffect(() => {
-    lockedBalance && setLockedBalance(lockedBalance);
+    lockedBalance && setLockedBalance(lockedBalance) && setDividedLockedBalance(formatUnits(lockedBalance, 18));
     rewardBalance && setRewardBalance(rewardBalance);
     lockTime && setLockTime(lockTime);
 
