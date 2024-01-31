@@ -90,6 +90,8 @@ export default function Home() {
     error: unLockError,
   } = useContractWrite(contractWriteConfig);
   console.log(unLockError);
+
+
   //USEEFFECT
 
   useEffect(() => {
@@ -132,8 +134,6 @@ export default function Home() {
     isLockTimeSuccess ? Number(_lockTime) : 0,
   );
 
-  if (unlockingStarted) return <p>Loading... Approve trx</p>
-  if (unlockingFinished) return <p>Loading...</p>
     // unLockError
   return (
     <main className="flex flex-col items-center justify-center min-h-screen p-6">
@@ -240,7 +240,7 @@ export default function Home() {
                       // console.log("fuck");
                     }}
                   >
-                    {unlockingStarted ? "Unlocking..." : "Unlock All Tokens "}
+                    {unlockingStarted ? "Unlocking..." : unlockingFinished ? "Succesfully Unlocked" : "Unlock All Tokens "}
                   </Button>
                 ) : (
                   <Button>No tokens found</Button>
