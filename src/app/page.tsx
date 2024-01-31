@@ -138,10 +138,10 @@ export default function Home() {
   return (
     <main className="flex flex-col items-center justify-center min-h-screen p-6">
       <div className="flex flex-col items-center w-full max-w-sm gap-6">
-        <h1 className="text-2xl font-semibold">TDH - Recovery</h1>
+        <h1 className="mb-5 text-2xl font-semibold">TDH - Recovery 🎈</h1>
 
-        <div className="flex flex-wrap items-center gap-6 p-4 border rounded-lg shadow-md">
-          <div className="flex items-center gap-2 p-3 border ">
+        <div className="flex flex-wrap items-center w-full gap-6 p-4 text-sm border rounded-lg shadow-md">
+          <div className="flex flex-col items-center gap-2 p-2 border ">
             <p className="font-semibold">Balance Locked:</p>
             {isConnected ? (
               <div>
@@ -161,7 +161,7 @@ export default function Home() {
             )}
           </div>
 
-          <div className="flex items-center gap-2 p-3 border ">
+          <div className="flex flex-col items-center gap-2 p-2 border ">
             <p className="font-semibold">Reward Gained:</p>
             {isConnected ? (
               <div>
@@ -185,7 +185,7 @@ export default function Home() {
             )}
           </div>
 
-          <div className="flex items-center gap-2 p-3 border ">
+          <div className="flex flex-col items-center gap-2 p-2 border ">
             <p className="font-semibold">Lock Time:</p>
             {isConnected ? (
               <div>
@@ -206,7 +206,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-4 p-4 m-4 border shadow-sm">
+        <div className="flex flex-col items-center w-full gap-3 p-4 m-4 border roundedmd">
           <div>
             <Label htmlFor="tokenamount">Token amount to unlock</Label>
             <Input
